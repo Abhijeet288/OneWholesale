@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -11,29 +11,23 @@ import {
   Platform,
   Image,
   Animated,
+  ScrollView,
+  SafeAreaView,
+  Dimensions,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { pulseAnimation } from '../utils/Animation';
+import { UserContext } from '../Contexts/UserContext';
+
+const { width, height } = Dimensions.get('window');
 
 export default function Signup() {
-
   const navigation = useNavigation();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [otp, setOtp] = useState('');
-  const [generatedOtp, setGeneratedOtp] = useState('');
-  const [showOtpSection, setShowOtpSection] = useState(false);
+  const { setUser } = useContext(UserContext);
   const fadeAnim = new Animated.Value(1);
 
-  const generateOTP = () => {
-    const otp = Math.floor(1000 + Math.random() * 9000).toString();
-    console.log('Generated OTP:', otp);
-    setGeneratedOtp(otp);
-  };
-
-  const NavigatetoSignIn = (lang) => {
-    navigation.navigate('Registration');
-  }
   const handleSendOTP = async () => {
     Keyboard.dismiss();
     if (phoneNumber.length !== 10 || !/^\d{10}$/.test(phoneNumber)) {
@@ -49,9 +43,15 @@ export default function Signup() {
 
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
-      generateOTP();
-      setShowOtpSection(true);
-      Toast.show({ type: 'success', text1:'OTP Sent Successfully !!' });
+      const otp = Math.floor(1000 + Math.random() * 9000).toString();
+      console.log('Generated OTP:', otp);
+
+      setUser({ phoneNumber });
+      Toast.show({ type: 'success', text1: 'OTP Sent Successfully!' });
+      navigation.navigate('OtpVerification', {
+        generatedOtp: otp,
+        purpose: 'Signup',
+      });
     } catch (error) {
       Toast.show({ type: 'error', text1: 'Failed to send OTP' });
     } finally {
@@ -59,136 +59,108 @@ export default function Signup() {
     }
   };
 
-  const handleVerifyOtp = () => {
-    if (otp === generatedOtp) {
-      Toast.show({ type: 'success', text1: 'OTP verified successfully!' });
-      navigation.navigate('Registration');
-    } else {
-      Toast.show({ type: 'error', text1: ' Invalid  OTP ! Please check again' });
-    }
-  };
-
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}>
-      <View style={styles.whiteBackground}>
-        <View style={styles.content}>
-          <Image
-            source={require('../assests/images/mainlogo.png')}
-            style={styles.logo}
-          />
-          <Text style={styles.title}>SignUp for New User !</Text>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.prefix}>+91</Text>
-            <TextInput
-              style={styles.input}
-              placeholder='Enter Phone number'
-              keyboardType="phone-pad"
-              maxLength={10}
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-              placeholderTextColor="#999"
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.container}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+          <View style={styles.content}>
+            <Image
+              source={require('../assests/images/mainlogo.png')}
+              style={[styles.logo]}
             />
-          </View>
+            <Text style={styles.title}>SignUp for New User !</Text>
 
-          <TouchableOpacity onPress={handleSendOTP} disabled={isLoading}>
-            <Animated.View style={[styles.button, { opacity: fadeAnim }]}>
-              <Text style={styles.buttonText}>
-                {isLoading ? 'Sending OTP ..': 'Send Otp'}
-              </Text>
-            </Animated.View>
-          </TouchableOpacity>
-
-          {showOtpSection && (
-            <>
+            <View style={styles.inputContainer}>
+              <Text style={styles.prefix}>+91</Text>
               <TextInput
-                style={{
-                  fontSize: 15,
-                  marginVertical: 20,
-                  width: '80%',
-                  textAlign: 'center',
-                  color: '#333',
-                  borderRadius: 10,
-                  borderColor: '#333',
-                  borderWidth: 1,
-                  backgroundColor: '#f9f9f9',
-                }}
-                placeholder='Enter 4-digit OTP'
-                keyboardType="numeric"
-                maxLength={4}
-                value={otp}
-                onChangeText={setOtp}
-                placeholderTextColor="grey"
+                style={styles.input}
+                placeholder="Enter Phone number"
+                keyboardType="phone-pad"
+                maxLength={10}
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+                placeholderTextColor="#999"
               />
-              <TouchableOpacity
-                onPress={handleVerifyOtp}
-                style={{ marginTop: 10 }}>
-                <View style={[styles.button, { backgroundColor: '#2196F3' }]}>
-                  <Text style={styles.buttonText}>Submit OTP</Text>
-                </View>
-              </TouchableOpacity>
-            </>
-          )}
+            </View>
 
-          <Text style={styles.terms}>
-            By continuing, you agree that you have read and accept our{'\n'}
-            <Text style={styles.link}>terms & conditions</Text> and{' '}
-            <Text style={styles.link}>privacy policy</Text>
-          </Text>
-        </View>
+            <TouchableOpacity onPress={handleSendOTP} disabled={isLoading}>
+              <Animated.View style={[styles.button, { opacity: fadeAnim, width: width * 0.8 }]}>
+                <Text style={styles.buttonText}>
+                  {isLoading ? 'Sending OTP ..' : 'Send OTP'}
+                </Text>
+              </Animated.View>
+            </TouchableOpacity>
 
-        <View style={styles.signupContainer}>
-          <Text style={styles.signupText}>Already have an account? </Text>
-           
-        </View>
-        <TouchableOpacity style={styles.LoginContainer} onPress={() => navigation.navigate('Registration')}>
-            <Text style={styles.signupLink}>Click here for Login</Text>
-          </TouchableOpacity>
-       
-      </View>
-      <Toast />
-    </KeyboardAvoidingView>
+            <Text style={styles.terms}>
+              By continuing, you agree that you have read and accept our{'\n'}
+              <Text style={styles.link}>terms & conditions</Text> and{' '}
+              <Text style={styles.link}>privacy policy</Text>
+            </Text>
+          </View>
+        </ScrollView>
+        <Toast />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, },
-  whiteBackground: {
-    flex: 1,
-    backgroundColor: 'white',
+  safeArea: 
+  { flex: 1, backgroundColor: 'white' },
+  container: { flex: 1 },
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
+    padding: 20,
   },
   content: {
-    padding: 20,
     alignItems: 'center',
   },
-  logo: { width: 400, height: 180, resizeMode: 'contain' },
+  logo: {
+     width: width * 0.8,
+    height: height * 0.2,
+    resizeMode: 'contain',
+    marginBottom: 20,
+  },
   title: {
-    fontSize: 28,
+    fontSize: width * 0.06,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 30,
+    textAlign: 'center',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: '#fff',
     borderRadius: 8,
-    marginBottom: 20,
-    width: '100%',
+     marginBottom: height * 0.025,
+    width: '95%',
+    height:height*0.08,
     borderWidth: 1,
     borderColor: '#ccc',
+    paddingHorizontal: 10,
   },
-  prefix: { paddingLeft: 15, paddingRight: 5, fontSize: 16, color: '#333' },
-  input: { flex: 1, padding: 15, fontSize: 16, color: '#333' },
+  prefix: {
+    fontSize: 16,
+    color: '#333',
+    marginRight: 5,
+  },
+  input: {
+    flex: 1,
+    paddingVertical: 12,
+    fontSize: 16,
+    color: '#333',
+  },
   button: {
     backgroundColor: '#4CAF50',
     paddingVertical: 15,
-    paddingHorizontal: 30,
     borderRadius: 8,
-    width: 300,
+    alignItems: 'center',
+    marginTop: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
@@ -199,34 +171,16 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-    textAlign: 'center',
   },
   terms: {
     color: '#555',
     textAlign: 'center',
     marginTop: 20,
     fontSize: 12,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
-  link: { color: '#4CAF50', textDecorationLine: 'underline' },
-  signupContainer: {
-    flexDirection: 'row',
-    marginTop: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  signupText: { color: '#333', fontSize: 17 },
-  signupLink: {
+  link: {
     color: '#4CAF50',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginLeft: 5,
     textDecorationLine: 'underline',
   },
-  LoginContainer:{
-
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
 });

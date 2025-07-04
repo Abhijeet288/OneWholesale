@@ -12,17 +12,12 @@ import {
 import AllLanguage from '../assests/constants/AllLanguage';
 
 
-
-
-
-
-
 const Language = () => {
   const navigation = useNavigation();
 
   const handleLanguageSelect = (lang) => {
 
-    navigation.navigate('Signup'); // Navigate back to LoginBuyer screen after changing language
+    navigation.navigate('LoginDelivery'); 
   };
 
   return (
@@ -59,7 +54,7 @@ const cardSize = width / 2 - 30;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#e6f5ec',
   },
   scrollContainer: {
     paddingBottom: 20,
@@ -79,6 +74,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 20,
     color: 'black',
+   
   },
   grid: {
     flexDirection: 'row',
@@ -99,10 +95,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: 'black',
+    
+
   },
   subText: {
     fontSize: 14,
     color: '#333',
+    
+
   },
 });
 

@@ -9,19 +9,18 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('window');
 
 const Selection = () => {
   const navigation = useNavigation();
 
-  const goTOSignInBuyer = () => {
-    navigation.navigate('Language');
+  const goToRegistration = () => {
+    navigation.navigate('Registration');
   };
 
-  const goTOSignInDelivery = () => {
-    navigation.navigate('Language');
-  };
+  
 
   return (
     <View style={styles.container}>
@@ -38,7 +37,7 @@ const Selection = () => {
         <View style={styles.card}>
           <TouchableOpacity
             style={styles.optionContainer}
-            onPress={goTOSignInBuyer}
+            onPress={goToRegistration}
           >
             <Image
               source={require('../assests/images/buyer.png')}
@@ -53,7 +52,7 @@ const Selection = () => {
         <View style={styles.card}>
           <TouchableOpacity
             style={styles.optionContainer}
-            onPress={goTOSignInDelivery}
+            onPress={goToRegistration}
           >
             <Image
               source={require('../assests/images/delivery.png')}

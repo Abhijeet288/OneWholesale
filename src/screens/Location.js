@@ -37,7 +37,7 @@ export default function Location() {
           style={styles.illustration}
         />
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('MainApp')}>
           <Text style={styles.buttonText}>Allow Location Access</Text>
         </TouchableOpacity>
 

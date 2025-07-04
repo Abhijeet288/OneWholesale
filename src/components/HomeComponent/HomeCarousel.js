@@ -31,25 +31,28 @@ export default function HomeCarousel() {
   const flatListRef = useRef(null);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveIndex(prevIndex => {
-        const nextIndex = (prevIndex + 1) % CAROUSEL_DATA.length;
-        flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
-        return nextIndex;
-      });
+    const interval = setInterval(() => {
+      const nextIndex = (activeIndex + 1) % CAROUSEL_DATA.length;
+      flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+      setActiveIndex(nextIndex);
     }, 3000);
 
-    return () => clearInterval(timer);
-  }, []);
+    return () => clearInterval(interval);
+  }, [activeIndex]);
 
   const renderItem = ({ item }) => (
-    <View style={{ width, height: width * 0.5625, padding: width * 0.025 }}>
+    <View style={{ width, height: width * 0.5625 }}>
       <Image source={{ uri: item.image }} style={styles.image} />
     </View>
   );
 
+  const handleScrollEnd = (event) => {
+    const index = Math.round(event.nativeEvent.contentOffset.x / width);
+    setActiveIndex(index);
+  };
+
   return (
-    <View>
+    <View style={{ width, height: width * 0.5625, marginVertical: 10 }}>
       <FlatList
         ref={flatListRef}
         data={CAROUSEL_DATA}
@@ -58,18 +61,21 @@ export default function HomeCarousel() {
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={(event) => {
-          const newIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-          setActiveIndex(newIndex);
-        }}
+        onMomentumScrollEnd={handleScrollEnd}
+        getItemLayout={(_, index) => ({
+          length: width,
+          offset: width * index,
+          index,
+        })}
       />
-      <View style={[styles.pagination, { bottom: width * 0.025 }]}>
+
+      {/* Dots just below the carousel */}
+      <View style={[styles.pagination]}>
         {CAROUSEL_DATA.map((_, index) => (
           <View
             key={index}
             style={[
               styles.dot,
-              { width: width * 0.02, height: width * 0.02, marginHorizontal: width * 0.01 },
               activeIndex === index && styles.activeDot,
             ]}
           />
@@ -81,22 +87,28 @@ export default function HomeCarousel() {
 
 const styles = StyleSheet.create({
   image: {
-    width: '100%',
-    height: '100%',
+    width: '88%',
+    height: '90%',
     resizeMode: 'cover',
     borderRadius: 12,
+    alignSelf: 'center',
   },
   pagination: {
     flexDirection: 'row',
     justifyContent: 'center',
-    position: 'absolute',
-    width: '100%',
+    alignItems: 'center',
   },
   dot: {
-    borderRadius: 50,
-    backgroundColor: 'rgba(255,255,255,0.5)',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    marginHorizontal: 5,
   },
   activeDot: {
+    width: 24,
+    height: 8,
+    borderRadius: 4,
     backgroundColor: '#fff',
   },
 });
