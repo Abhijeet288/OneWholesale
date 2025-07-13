@@ -7,19 +7,15 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
-  Platform,
-  PermissionsAndroid,
-  Alert,
+  ScrollView,
 } from 'react-native';
-
 
 export default function Location() {
   const navigation = useNavigation();
 
-  
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.container}>
         <Image
           source={require('../assests/images/mainlogo.png')}
           style={styles.logo}
@@ -37,7 +33,10 @@ export default function Location() {
           style={styles.illustration}
         />
 
-        <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('MainApp')}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('MainApp')}
+        >
           <Text style={styles.buttonText}>Allow Location Access</Text>
         </TouchableOpacity>
 
@@ -45,27 +44,26 @@ export default function Location() {
           style={styles.manualButton}
           onPress={() => navigation.navigate('LocationManual')}
         >
-          <Text style={styles.manualButtonText}>
-            Enter Location Manually
-          </Text>
+          <Text style={styles.manualButtonText}>Enter Location Manually</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  scrollContainer: {
+    flexGrow: 1,
     backgroundColor: 'white',
   },
-  content: {
+  container: {
     flex: 1,
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingTop: height * 0.05,
+    paddingBottom: height * 0.05, // Add bottom padding for spacing
   },
   logo: {
     width: width * 0.4,

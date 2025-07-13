@@ -1,5 +1,5 @@
 // DeliverySelection.js
-import React, { useState, useCallback } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -16,33 +16,32 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useAddress } from '../../Contexts/AddressContext';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { UserContext } from '../../Contexts/UserContext';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
+
 const DeliverySelection = () => {
-  const [selectedOption, setSelectedOption] = useState('delivery');
+
+  const { user } = useContext(UserContext);
   const { addressList, deleteAddress, setEditingAddress } = useAddress();
   const navigation = useNavigation();
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [showOptionsInitially, setShowOptionsInitially] = useState(true);
 
-  // const handleFormSubmit = () => {
-  //   navigation.goBack();
-  // };
-
-  //   useFocusEffect(
-  //   useCallback(() => {
-  //     // You could add any logic to fetch updated addresses here
-  //     // But since you're using context, just re-render is enough
-  //   }, [addressList])
-  // );
 
   const handleOptionSelect = (option) => {
-    if (option !== selectedOption) {
-      const label = option === 'delivery' ? 'Home Delivery' : 'Pickup from Store';
-      Alert.alert('Confirm Change', `Do you want to switch to ${label}?`, [
-        { text: 'No', style: 'cancel' },
-        { text: 'Yes', onPress: () => setSelectedOption(option) },
-      ]);
-    }
+    const label = option === 'delivery' ? 'Home Delivery' : 'Pickup from Store';
+    Alert.alert('Confirm Selection', `Proceed with ${label}?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Yes',
+        onPress: () => {
+          setSelectedOption(option);
+          setShowOptionsInitially(false);
+        },
+      },
+    ]);
   };
 
   const renderAddressCards = () => (
@@ -58,10 +57,10 @@ const DeliverySelection = () => {
         {addressList.map((item, index) => (
           <View style={styles.card} key={index}>
             <View style={styles.cardHeader}>
-              <Text style={styles.cardTitle}>{item.farmerName}</Text>
+              <Text style={styles.cardTitle}>{item.farmerName || user?.name || 'N/A'}</Text>
 
 
-              
+
               <View style={{ flexDirection: 'row', gap: 20 }}>
                 {/* EDIT ICON */}
                 <TouchableOpacity onPress={() => {
@@ -79,7 +78,7 @@ const DeliverySelection = () => {
                 </TouchableOpacity>
               </View>
 
-              
+
             </View>
             <View style={styles.cardRow}><Icon name="phone" size={16} style={styles.icon} /><Text>+91 {item.farmerPhone}</Text></View>
             <View style={styles.cardRow}><Icon name="home" size={16} style={styles.icon} /><Text>{item.houseNameArea}, {item.landmark}</Text></View>
@@ -92,7 +91,9 @@ const DeliverySelection = () => {
   );
 
   const renderStoreCard = () => (
+
     <View style={styles.storeCard}>
+
       <Image
         source={{ uri: 'https://cdn-icons-png.freepik.com/256/13531/13531631.png' }}
         style={styles.storeImage}
@@ -109,36 +110,40 @@ const DeliverySelection = () => {
         </View>
       </View>
     </View>
+
   );
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>How Would You Like to Receive Your Order?</Text>
+        {showOptionsInitially ? (
+          <>
+            <Text style={styles.title}>How Would You Like to Receive Your Order?</Text>
 
-        <View style={styles.optionsContainer}>
-          {['delivery', 'pickup'].map((option) => (
-            <TouchableOpacity
-              key={option}
-              style={[styles.optionCard, selectedOption === option && styles.selectedCard]}
-              onPress={() => handleOptionSelect(option)}
-            >
-              <Text style={styles.optionText}>
-                {option === 'delivery' ? 'Home\nDelivery' : 'Pickup\nfrom Store'}
-              </Text>
-              <View style={[styles.radioButton, selectedOption === option && styles.radioButtonSelected]}>
-                {selectedOption === option && <View style={styles.radioButtonInner} />}
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {selectedOption === 'delivery' ? (
+            <View style={styles.optionsContainer}>
+              {['delivery', 'pickup'].map((option) => (
+                <TouchableOpacity
+                  key={option}
+                  style={[styles.optionCard, selectedOption === option && styles.selectedCard]}
+                  onPress={() => handleOptionSelect(option)}
+                >
+                  <Text style={styles.optionText}>
+                    {option === 'delivery' ? 'Home\nDelivery' : 'Pickup\nfrom Store'}
+                  </Text>
+                  <View
+                    style={[styles.radioButton, selectedOption === option && styles.radioButtonSelected]}
+                  >
+                    {selectedOption === option && <View style={styles.radioButtonInner} />}
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </>
+        ) : selectedOption === 'delivery' ? (
           addressList.length > 0 ? (
             renderAddressCards()
           ) : (
             <View style={styles.centerContent}>
-
               <Text style={styles.noAddressText}>No address saved yet.</Text>
               <TouchableOpacity onPress={() => navigation.navigate('AddressScreen')}>
                 <Text style={styles.addAddressText}>+ Add Address</Text>
@@ -147,10 +152,29 @@ const DeliverySelection = () => {
           )
         ) : (
           <ScrollView contentContainerStyle={styles.scrollContent}>
-            {[1, 2].map((_, i) => <React.Fragment key={i}>{renderStoreCard()}</React.Fragment>)}
+            <Text style={styles.storeSectionTitle}>Nearest One Center</Text>
+            {[1, 2].map((_, i) => (
+              <React.Fragment key={i}>
+                {renderStoreCard()}
+              </React.Fragment>
+            ))}
           </ScrollView>
         )}
+
+        {/* Show Change Option button only after user made a selection */}
+        {!showOptionsInitially && (
+          <TouchableOpacity
+            onPress={() => setShowOptionsInitially(true)}
+            style={{ alignSelf: 'center', marginTop: 20 }}
+          >
+            <Text style={{ color: '#007BFF', fontSize: 16, fontWeight: 'bold' }}>
+              Change Delivery Option
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
+
+
     </SafeAreaView>
   );
 };
@@ -261,6 +285,15 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   buttonText: { color: '#fff', fontWeight: 'bold' },
+  storeSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+    marginLeft: 6,
+  },
+
+
 });
 
 export default DeliverySelection;

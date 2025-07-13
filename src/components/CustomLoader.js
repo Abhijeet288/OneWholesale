@@ -1,4 +1,3 @@
-// components/CustomLoader.js
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, Animated } from 'react-native';
 
@@ -8,14 +7,12 @@ const imageData = [
   { uri: require('../assests/images/img/drone.png'), text: 'Drone' },
   { uri: require('../assests/images/img/feed.webp'), text: 'Feed' },
   { uri: require('../assests/images/img/harvestor.png'), text: 'Harvestor' },
-  { uri: require('../assests/images/img/sprayer.png'), text: 'sprayer' },
-  { uri: require('../assests/images/img/precessionfarming.png'), text: 'precession' },
-  { uri: require('../assests/images/img/seed.png'), text: 'seed' },
-  { uri: require('../assests/images/img/tractor.png'), text: 'tractor' },
-  { uri: require('../assests/images/img/weather.png'), text: 'weather' },
+  { uri: require('../assests/images/img/sprayer.png'), text: 'Sprayer' },
+  { uri: require('../assests/images/img/precessionfarming.png'), text: 'Precession' },
+  { uri: require('../assests/images/img/seed.png'), text: 'Seed' },
+  { uri: require('../assests/images/img/tractor.png'), text: 'Tractor' },
+  { uri: require('../assests/images/img/weather.png'), text: 'Weather' },
   { uri: require('../assests/images/img/pesticides.png'), text: 'Pesticides' },
-
-
 ];
 
 const CustomLoader = ({ visible, onFinish }) => {
@@ -27,23 +24,23 @@ const CustomLoader = ({ visible, onFinish }) => {
 
     Animated.timing(translateY, {
       toValue: 0,
-      duration: 300,
+      duration: 200,
       useNativeDriver: true,
     }).start();
 
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % imageData.length);
-    }, 300);
+    }, 100); // Change image every 100ms
 
     const timeout = setTimeout(() => {
       Animated.timing(translateY, {
         toValue: 30,
-        duration: 300,
+        duration: 200,
         useNativeDriver: true,
       }).start(() => {
         if (onFinish) onFinish();
       });
-    }, 3000);
+    }, 100 * imageData.length + 100); // Slight buffer
 
     return () => {
       clearInterval(interval);
@@ -68,15 +65,15 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   image: {
-    width: width * 0.35,
-    height: width * 0.35,
-    opacity: 0.8,
+    width: width * 0.20,   // Smaller image
+    height: width * 0.20,  // Smaller image
+    opacity: 0.9,
   },
   text: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '500',
     color: '#000',
-    marginTop: 10,
+    marginTop: 6,
     opacity: 0.8,
   },
 });

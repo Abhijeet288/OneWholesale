@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useContext } from 'react';
+import React, { useCallback, useState, useEffect, useContext, } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,useFocusEffect } from '@react-navigation/native';
 import { useAddress } from '../Contexts/AddressContext';
 import { UserContext } from '../Contexts/UserContext';
 
@@ -41,15 +41,33 @@ const AddressScreen = () => {
     state: '',
   });
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     if (editingAddress) {
-      setFormData((prev) => ({
-        ...prev,
+      setFormData({
         ...editingAddress,
         farmerName: editingAddress.farmerName || user?.name || '',
-      }));
+      });
+    } else {
+      setFormData({
+        farmerName: '',
+        farmerPhone: '',
+        farmerAddress: '',
+        houseNameArea: '',
+        landmark: '',
+        pincode: '',
+        block: '',
+        village: '',
+        district: '',
+        state: '',
+      });
     }
-  }, [editingAddress]);
+    setTouchedFields({});
+    setHasInteracted(false);
+    setError({});
+  }, [editingAddress, user])
+);
+
 
   const updateField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

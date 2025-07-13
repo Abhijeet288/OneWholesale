@@ -169,9 +169,10 @@ export default function RentalRegistrationForm() {
       <TouchableOpacity style={styles.button} onPress={handleEnter}>
         <Text style={styles.buttonText}>Enter</Text>
       </TouchableOpacity>
-
-        <AddressDrawer />
+    
     </ScrollView>
+
+    <AddressDrawer />
     </>
   );
 }
@@ -179,10 +180,10 @@ export default function RentalRegistrationForm() {
 const styles = StyleSheet.create({
   container: {
     paddingTop: height * 0.05,
-    paddingBottom: height * 0.05,
+    height:0,
     paddingHorizontal: width * 0.05,
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
     flexGrow: 1,
   },
   title: {
@@ -208,8 +209,8 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#007AFF',
-    borderRadius: 6,
+    borderColor: '#5cb85c',
+    borderRadius:8,
     padding: 10,
     width: '65%',
     backgroundColor: '#fff',

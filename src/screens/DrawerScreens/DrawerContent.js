@@ -23,7 +23,7 @@ export const DrawerContent = ({ navigation }) => {
     name: user.name,
     phone: user.phoneNumber,
   };
-  
+
 
   const sections = [
     // {
@@ -39,7 +39,7 @@ export const DrawerContent = ({ navigation }) => {
       ],
     },
     {
-      title: 'Earn with DeHaat',
+      title: 'Earn with OneWholesale',
 
       items: [
         { icon: 'gift', label: 'Refer & Earn', isNew: true },
@@ -47,11 +47,11 @@ export const DrawerContent = ({ navigation }) => {
       ],
     },
     {
-      title: 'DeHaat Services',
+      title: 'OneWholesale Services',
 
       items: [
-        { icon: 'cloud', label: 'Weather' ,navigateTo:'WeatherScreenDrawer'},
-        //{ icon: 'cloud', label: 'Satellite Monitoring' ,navigateTo:''},
+        { icon: 'cloud', label: 'Weather', navigateTo: 'WeatherScreenDrawer' },
+        { icon: 'satellite', label: 'Precison Farming', navigateTo: '' },
 
       ],
     },
@@ -59,8 +59,8 @@ export const DrawerContent = ({ navigation }) => {
       title: 'Help and Support',
 
       items: [
-        { icon: 'phone', label: 'Call krushi expert' , navigateTo:'CallSupport'},
-        { icon: 'whatsapp', label: 'Chat on whatsapp', navigateTo:'WhatsappSupport'},
+        { icon: 'phone', label: 'Call krushi expert', navigateTo: 'CallSupport' },
+        { icon: 'whatsapp', label: 'Chat on whatsapp', navigateTo: 'WhatsappSupport' },
       ],
     },
     // {
@@ -74,8 +74,8 @@ export const DrawerContent = ({ navigation }) => {
     {
       title: 'Account Settings',
       items: [
-        { icon: 'language', label: 'Select Language',navigateTo:'LanguageDrawer' },
-        { icon: 'location-dot', label: 'Saved Address',navigateTo:'AddressDrawer' },
+        { icon: 'language', label: 'Select Language', navigateTo: 'LanguageDrawer' },
+        { icon: 'location-dot', label: 'Saved Address', navigateTo: 'AddressDrawer' },
         { icon: 'address-card', label: 'Terms & Condition' },
         { icon: 'file', label: 'Privacy & Policy' },
       ],
@@ -104,15 +104,17 @@ export const DrawerContent = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.dispatch(DrawerActions.closeDrawer())}>
-          <MaterialIcons name="keyboard-arrow-left" size={32} color="#fff" />
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.dispatch(DrawerActions.closeDrawer())}
+        >
+          <MaterialIcons name="keyboard-arrow-left" size={32} color="black" />
         </TouchableOpacity>
         <Image
           source={require('../../assests/images/mainlogo.png')}
           style={styles.headerImage}
         />
       </View>
-
       <View style={styles.profileCard}>
         <View style={styles.profileInfo}>
           <View style={styles.profileImageContainer}>
@@ -156,7 +158,7 @@ export const DrawerContent = ({ navigation }) => {
       </ScrollView>
       <TouchableOpacity
         style={styles.logoutButton}
-        onPress={()=> navigation.replace('LoginDelivery')}
+        onPress={() => navigation.replace('LoginDelivery')}
       >
         <FontAwesome name="sign-out" size={22} color="#e74c3c" />
         <Text style={styles.logoutText}>Logout</Text>
@@ -171,27 +173,35 @@ const styles = StyleSheet.create({
     flex: 1,
     // backgroundColor: '#fff',
     backgroundColor: '#e6f5ec',
-    
+
   },
   header: {
-    backgroundColor:'#b1e0cd',
+    backgroundColor: '#b1e0cd',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: width * 0.04,
-    paddingVertical: height * 0.015,
-  },
-  backButton: {
-    marginRight: width * 0.02,
+    justifyContent: 'center', // center horizontally
+    paddingVertical: height * 0.02,
+    position: 'relative', // allow absolute positioning for back button
   },
   headerImage: {
-    width: width * 0.15,
-    height: height * 0.06,
-    resizeMode: 'contain',
-    borderRadius: 12,
+    width: width * 0.33, // increase size
+    height: height * 0.12,
+    // borderWidth:2,
+    display:'flex',
+    alignItems:'center',
+    justifyContent:'center',
+    // resizeMode: 'contain',
+    // marginBottom:0
+    
   },
+  backButton: {
+    position: 'absolute',
+    left: width * 0.04,
+    
+  },
+
   profileCard: {
-  backgroundColor:'#b1e0cd',
+    backgroundColor: '#b1e0cd',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -202,14 +212,14 @@ const styles = StyleSheet.create({
   },
   profileInfo: {
     backgroundColor: 'white',
-    padding: width * 0.03,
+    padding: width * 0.03, 
     flexDirection: 'row',
     borderRadius: 12,
     flex: 1,
     alignItems: 'center',
   },
   profileImageContainer: {
-    width: width * 0.14,
+    width: width * 0.15,
     height: width * 0.14,
     borderRadius: width * 0.07,
     backgroundColor: '#f0f0f0',
@@ -292,21 +302,21 @@ const styles = StyleSheet.create({
     fontSize: width * 0.03,
   },
   logoutButton: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent:'center',
-  paddingHorizontal: width * 0.04,
-  paddingVertical: height * 0.02,
-  borderTopWidth: 1,
-  borderColor: '#eee',
-  marginBottom: height * 0.01,
-},
-logoutText: {
-  marginLeft: width * 0.03,
-  fontSize: width * 0.04,
-  color: '#e74c3c',
-  fontWeight: 'bold',
-},
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: width * 0.04,
+    paddingVertical: height * 0.02,
+    borderTopWidth: 1,
+    borderColor: '#eee',
+    marginBottom: height * 0.01,
+  },
+  logoutText: {
+    marginLeft: width * 0.03,
+    fontSize: width * 0.04,
+    color: '#e74c3c',
+    fontWeight: 'bold',
+  },
 
 });
 

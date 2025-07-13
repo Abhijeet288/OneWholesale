@@ -1,6 +1,7 @@
 import React,{useContext} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { useLocation } from '../../Contexts/LocationContext';
 import { UserContext } from '../../Contexts/UserContext';
@@ -24,18 +25,22 @@ export default function Header() {
           <Text style={styles.username}>Welcome {user.name} 👋</Text>
           <Text style={[styles.locationLabel, { fontSize: smallFont }]}>Your location</Text>
           <TouchableOpacity style={styles.locationButton}>
-            <Text style={[styles.locationText, { fontSize: largeFont }]}>{location.block}, {location.district}</Text>
-            <Ionicons name="chevron-down" size={iconSize * 0.8} color="#4CAF50" />
+            <Text style={[styles.locationText, { fontSize: largeFont }]}>{location.block || "--"}, {location.district||"--"}</Text>
+            {/* <Ionicons name="chevron-down" size={iconSize * 0.8} color="#4CAF50" /> */}
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.rightIcons}>
+
+        <TouchableOpacity style={styles.iconButton} onPress={() =>navigation.navigate('LanguageDrawer')}>
+          <FontAwesome name="language" size={22} color="#666" />
+        </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="notifications-outline" size={iconSize} color="#666" />
+          <Ionicons name="notifications-outline" size={iconSize} color="black" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton} onPress={() =>navigation.openDrawer()
 }>
-          <Ionicons name="person-circle-outline" size={iconSize} color="#666" />
+          <Ionicons name="person-circle-outline" size={iconSize} color="black" />
         </TouchableOpacity>
       </View>
     </View>
@@ -49,7 +54,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     paddingVertical:18,
-    height:'15%',
+    height:'13%',
     borderBottomRightRadius: 22,
     borderBottomLeftRadius: 22,
   },

@@ -127,8 +127,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: 'white',
-    padding: width * 0.04,
-    borderTopWidth: 1,
+    padding: width * 0.04,                                
+    // borderTopWidth: 1,
     borderTopColor: '#eee',
   },
   saveButton: {

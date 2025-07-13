@@ -6,8 +6,8 @@ export default function NewAddress() {
   const navigation = useNavigation();
 
   const handleFormSubmit = (data) => {
-    navigation.goBack(); // Navigate to a different screen
+    navigation.goBack(); 
   };
 
-  return <AddressScreen />;
+  return <AddressScreen onSubmit={handleFormSubmit} />;
 }

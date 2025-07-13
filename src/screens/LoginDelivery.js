@@ -14,7 +14,6 @@ import {
     ImageBackground,
     Dimensions,
 } from 'react-native';
-import Toast from 'react-native-toast-message';
 import { pulseAnimation } from '../utils/Animation';
 import { UserContext } from '../Contexts/UserContext';
 import SignupPrompt from '../components/SignupPrompt';
@@ -25,6 +24,7 @@ const { width, height } = Dimensions.get('window');
 export default function LoginDelivery() {
     const navigation = useNavigation();
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [phoneError, setPhoneError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const fadeAnim = new Animated.Value(1);
     const { setUser } = useContext(UserContext);
@@ -37,14 +37,13 @@ export default function LoginDelivery() {
 
     const handleSendOTP = async () => {
         Keyboard.dismiss();
+
         if (phoneNumber.length !== 10 || !/^\d{10}$/.test(phoneNumber)) {
-            Toast.show({
-                type: 'error',
-                text1: 'Please enter a valid 10-digit phone number',
-            });
+            setPhoneError('Please enter a valid 10-digit phone number');
             return;
         }
 
+        setPhoneError('');
         setIsLoading(true);
         pulseAnimation(fadeAnim).start();
 
@@ -52,14 +51,13 @@ export default function LoginDelivery() {
             await new Promise(resolve => setTimeout(resolve, 1500));
             const otp = generateOTP();
             setUser({ phoneNumber });
-            
+
             navigation.navigate('OtpVerification', {
                 generatedOtp: otp,
                 purpose: 'login',
             });
-            Toast.show({ type: 'success', text1: 'OTP Sent Successfully!' });
         } catch (error) {
-            Toast.show({ type: 'error', text1: 'Failed to send OTP' });
+            setPhoneError('Failed to send OTP. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -83,8 +81,6 @@ export default function LoginDelivery() {
                         />
                         <Text style={styles.title}>Enter your Phone Number</Text>
 
-
-
                         <View style={styles.inputContainer}>
                             <View style={styles.iconContainer}>
                                 <Ionicons name="call" size={width * 0.06} color="#333" />
@@ -92,14 +88,22 @@ export default function LoginDelivery() {
 
                             <TextInput
                                 style={styles.input}
-                                // placeholder="Enter Phone number"
                                 keyboardType="phone-pad"
                                 maxLength={10}
                                 value={phoneNumber}
-                                onChangeText={setPhoneNumber}
+                                onChangeText={(text) => {
+                                    setPhoneNumber(text);
+                                    setPhoneError('');
+                                }}
+                                placeholder="Enter Phone Number"
                                 placeholderTextColor="#999"
                             />
                         </View>
+
+                        {/* Error message below input */}
+                        {phoneError ? (
+                            <Text style={styles.errorText}>{phoneError}</Text>
+                        ) : null}
 
                         <TouchableOpacity onPress={handleSendOTP} disabled={isLoading}>
                             <Animated.View style={[styles.button, { opacity: fadeAnim }]}>
@@ -111,7 +115,6 @@ export default function LoginDelivery() {
                         <SignupPrompt />
                     </View>
                 </View>
-                <Toast />
             </KeyboardAvoidingView>
         </ImageBackground>
     );
@@ -121,7 +124,7 @@ const styles = StyleSheet.create({
     background: {
         flex: 1,
         justifyContent: 'center',
-        backgroundColor:'#e6f5ec'
+        backgroundColor: '#e6f5ec',
     },
     container: {
         flex: 1,
@@ -153,9 +156,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#f0f0f0',
         borderRadius: 8,
-        marginBottom: height * 0.025,
+        marginBottom: height * 0.015,
         width: '95%',
-        height: height * 0.065,
+        height: height * 0.072,
         borderWidth: 1,
         borderColor: '#ccc',
     },
@@ -167,21 +170,21 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderTopLeftRadius: 8,
         borderBottomLeftRadius: 8,
-
-        justifyContent: 'center', // vertical center
+        justifyContent: 'center',
         alignItems: 'center',
-    },
-    prefix: {
-        paddingLeft: width * 0.04,
-        paddingRight: width * 0.02,
-        fontSize: width * 0.045,
-        color: '#333',
     },
     input: {
         flex: 1,
         padding: width * 0.04,
         fontSize: width * 0.045,
         color: '#333',
+    },
+    errorText: {
+        color: 'red',
+        fontSize: width * 0.035,
+        marginBottom: height * 0.015,
+        alignSelf: 'flex-start',
+        marginLeft: width * 0.025,
     },
     button: {
         backgroundColor: '#4CAF50',

@@ -13,7 +13,7 @@ const Firstpage = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLoader(true);
-    }, 1000); // show loader after 5 seconds
+    },150); // Show loader after 1.5 seconds
 
     return () => clearTimeout(timer);
   }, []);

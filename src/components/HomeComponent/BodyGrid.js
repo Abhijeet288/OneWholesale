@@ -5,9 +5,9 @@ const SERVICES = [
   { id: '1', title: 'Mandi Price', icon: require('../../assests/images/agg.png'),navigateTo:'MandiPrice' },
   { id: '2', title: 'Crop Doctor', icon: require('../../assests/images/cropdoc.png') ,navigateTo:'CropDoctor'},
   { id: '3', title: 'Weather', icon: require('../../assests/images/weather.png'),navigateTo:'Weather' },
-  { id: '4', title: 'Soil Test', icon: require('../../assests/images/soiltest.png'),navigateTo:'SoilTesting' },
+  { id: '4', title: 'Smart Farming', icon: require('../../assests/images/smartfarming.png'),navigateTo:'SoilTesting' },
   { id: '5', title: 'Nearest Store', icon: require('../../assests/images/store1.png'),navigateTo:'NearestStore' },
-  { id: '6', title: 'Happy Kissan', icon: require('../../assests/images/kissan.png'),navigateTo:'HappyKissan' },
+  { id: '6', title: 'Knowledge Center', icon: require('../../assests/images/knowledge.png'),navigateTo:'HappyKissan' },
 ];
 
 export default function BodyGrid() {
@@ -33,18 +33,21 @@ export default function BodyGrid() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
+    // borderWidth:2,
+    
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent:'space-between',
+    alignItems: 'center',
   },
   serviceItem: {
+    
     alignItems: 'center',
     marginVertical: 10,
     padding: 12,
-    borderRadius: 5,
-    borderColor: 'grey'
+    
   },
   icon: {
     resizeMode: 'contain',

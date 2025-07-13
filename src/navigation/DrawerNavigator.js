@@ -46,7 +46,6 @@ const drawerScreenTitles = {
   RentalRegistration:'Add your Details',
   AddAddressPage: 'Add New Address',
   Coupon: 'My Coupons',
-
   Tractor:'All tractor items',
   Traps:'All traps items',
   Pumpset:'All pumpset items',

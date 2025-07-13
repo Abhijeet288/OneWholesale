@@ -10,18 +10,19 @@ import {
 const CAROUSEL_DATA = [
   {
     id: '1',
-    image:
-      'https://api.a0.dev/assets/image?text=agriculture%20product%20banner%20with%20drip%20irrigation%20system&aspect=16:9',
+    image:require('../../assests/images/banner/carousel1.jpg'),
   },
   {
     id: '2',
-    image:
-      'https://api.a0.dev/assets/image?text=farming%20equipment%20and%20tools%20showcase&aspect=16:9',
+    image:require('../../assests/images/banner/carousel2.jpg'),
   },
   {
     id: '3',
-    image:
-      'https://api.a0.dev/assets/image?text=organic%20fertilizers%20and%20pesticides%20banner&aspect=16:9',
+    image:require('../../assests/images/banner/carousel3.jpg'),
+  },
+  {
+    id: '4',
+    image:require('../../assests/images/banner/carousel4.jpg'),
   },
 ];
 
@@ -42,7 +43,7 @@ export default function HomeCarousel() {
 
   const renderItem = ({ item }) => (
     <View style={{ width, height: width * 0.5625 }}>
-      <Image source={{ uri: item.image }} style={styles.image} />
+      <Image source={item.image} style={styles.image} />
     </View>
   );
 

@@ -9,7 +9,7 @@ export default function SignupPrompt() {
     return (
         <View style={styles.signupContainer}>
             <Text style={styles.newUserText}>New User?</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Selection')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Registration')}>
                 <Text style={styles.signupText}>Create an account</Text>
             </TouchableOpacity>
         </View>

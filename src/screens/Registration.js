@@ -31,7 +31,7 @@ export default function Registration() {
       gender,
     }));
     setTempFarmerName(name);
-    console.log('Set name to context:', name);
+    // console.log('Set name to context:', name);
 
     navigation.navigate('Location');
   };

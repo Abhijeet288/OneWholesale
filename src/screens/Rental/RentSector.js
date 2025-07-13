@@ -26,7 +26,7 @@ const RentSector = () => {
       uri: require('../../assests/rent/harvestor.png'),
     },
     {
-      sub: 'KissanDrones',
+      sub: 'Drones',
       uri: require('../../assests/rent/drones.jpg'),
     },
     {
@@ -39,7 +39,15 @@ const RentSector = () => {
       uri: require('../../assests/rent/pumpset.jpeg'),
     },
     {
-      sub: 'Pneumatic planter',
+      sub: 'Sprayer',
+      // uri: require('../../assests/rent/gardentool.png'),
+    },
+    {
+      sub: 'Power Tillers',
+      // uri: require('../../assests/rent/gardentool.png'),
+    },
+    {
+      sub: 'Others..',
       // uri: require('../../assests/rent/gardentool.png'),
     },
   ];
