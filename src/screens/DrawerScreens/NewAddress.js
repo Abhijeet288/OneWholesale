@@ -9,5 +9,5 @@ export default function NewAddress() {
     navigation.goBack(); // Navigate to a different screen
   };
 
-  return <AddressScreen onSubmit={handleFormSubmit} />;
+  return <AddressScreen />;
 }
