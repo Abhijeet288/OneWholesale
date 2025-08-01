@@ -12,7 +12,7 @@ import WhatsappSupport from '../screens/DrawerScreens/WhatsappSupport';
 import CustomHeader from '../components/DrawerComponent/CustomHeader';
 import AddressDrawer from '../screens/DrawerScreens/AddressDrawer';
 import NewAddress from '../screens/DrawerScreens/NewAddress';
-import Tractor from '../screens/Rental/RentalScreen/Tractor';
+
 import RentalRegistration from '../screens/Rental/RentalRegistration';
 import MyCartScreen from '../screens/BottomTabScreens/MyCartScreen';
 import AddAddressPage from '../screens/Shop/AddAddressPage';
@@ -26,6 +26,14 @@ import HandTools from '../screens/Rental/RentalScreen/HandTools';
 import GardenTools from '../screens/Rental/RentalScreen/GardenTools';
 import KissanDrones from '../screens/Rental/RentalScreen/KissanDrones';
 import Coupon from '../components/Coupon';
+import EditAddress from '../components/EditAddress';
+
+
+
+
+import Tractor from '../screens/Rental/RentalScreen/Tractor';
+import RentalSubcategory from '../screens/Rental/RentalSubcategory';
+import RentalProducts from '../screens/Rental/RentalProducts';
 
 
 
@@ -41,11 +49,19 @@ const drawerScreenTitles = {
   CallSupport: 'Call Support',
   WhatsappSupport: 'WhatsApp Support',
   Profile: 'My Profile',
+  Coupon: 'My Coupons',
+
+
+  //Address Screen
   AddressDrawer:'My Addresses',
   NewAddress:'Add New Address',
-  RentalRegistration:'Add your Details',
   AddAddressPage: 'Add New Address',
-  Coupon: 'My Coupons',
+
+
+  //Rental Screen
+  RentalProducts: 'Products List',
+  RentalRegistration:'Add your Details',
+  RentalSubcategory: 'Rental Subcategories',
   Tractor:'All tractor items',
   Traps:'All traps items',
   Pumpset:'All pumpset items',
@@ -55,6 +71,11 @@ const drawerScreenTitles = {
   Harvestor:'All Harvestor items',
   HandTools:'All Hand Tools items',
   GardenTools:'All Garden Tools items',
+
+  EditAddress: 'Edit Screen',
+
+
+
 
   
 };
@@ -98,11 +119,13 @@ export default function DrawerNavigator() {
       <Drawer.Screen name="NewAddress" component={NewAddress} />
       <Drawer.Screen name="AddAddressPage" component={AddAddressPage} />
       <Drawer.Screen name="Coupon" component={Coupon} />
+      <Drawer.Screen name="EditAddress" component={EditAddress} />
 
 
 
 
-
+      <Drawer.Screen name="RentalProducts" component={RentalProducts} />
+      <Drawer.Screen name="RentalSubcategory" component={RentalSubcategory} />
       <Drawer.Screen name="RentalRegistration" component={RentalRegistration} />
       <Drawer.Screen name="Tractor" component={Tractor} />
       <Drawer.Screen name="Traps" component={Traps} />
@@ -113,13 +136,7 @@ export default function DrawerNavigator() {
       <Drawer.Screen name="Harvestor" component={Harvestor} />
       <Drawer.Screen name="HandTools" component={HandTools} />
       <Drawer.Screen name="GardenTools" component={GardenTools} />
-
-
-
-
-
-
-
+    
 
 
     </Drawer.Navigator>

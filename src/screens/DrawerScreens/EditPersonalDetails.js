@@ -13,7 +13,7 @@ export default function EditPersonalDetails({ navigation }) {
 
 useEffect(() => {
   if (user) {
-    setName(user.name || '');
+    setName(`${user.firstName} ${user.lastName}`.trim());
     const normalizedGender =
       user.gender?.charAt(0).toUpperCase() + user.gender?.slice(1).toLowerCase();
     setGender(normalizedGender || '');
@@ -22,8 +22,14 @@ useEffect(() => {
 
 
   const handleSave = () => {
-    setUser(prev => ({ ...prev, name, gender }));
-    navigation.goBack(); // or goBack() depending on flow
+    const [firstName, lastName] = name.trim().split(' ');
+    setUser(prev => ({
+      ...prev,
+      firstName: firstName || '',
+      lastName: lastName || '',
+      gender,
+    }));
+    navigation.goBack();
   };
 
   const clearName = () => setName('');

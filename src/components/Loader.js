@@ -8,7 +8,7 @@ const { width, height } = Dimensions.get('window');
 const Loader = ({ visible = true }) => {
   if (!visible) 
     return null;
-
+  console.log('LottieView is:', LottieView);
   return (
     <View style={styles.overlay}>
       <LottieView

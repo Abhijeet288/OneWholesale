@@ -33,12 +33,12 @@ export default function Location() {
           style={styles.illustration}
         />
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.navigate('MainApp')}
         >
           <Text style={styles.buttonText}>Allow Location Access</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity
           style={styles.manualButton}
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   },
   manualButtonText: {
     color: '#008756',
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '500',
   },
 });

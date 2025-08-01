@@ -28,6 +28,10 @@ import Coupon from '../components/Coupon';
 import AddressScreen from '../components/AddressScreen';
 import AddressDrawer from '../screens/DrawerScreens/AddressDrawer';
 import DeliverySelection from '../components/HomeComponent/DeliverySelection';
+import EditAddress from '../components/EditAddress';
+import RentalSubcategory from '../screens/Rental/RentalSubcategory';
+import Tractor from '../screens/Rental/RentalScreen/Tractor';
+import RentalRegistration from '../screens/Rental/RentalRegistration';
 
 
 const Stack = createStackNavigator();
@@ -35,7 +39,7 @@ const Stack = createStackNavigator();
 export default function AppNavigator() {
   return (
     
-    <AppProviders>
+    
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen  name="Firstpage" component={Firstpage} />
@@ -55,38 +59,27 @@ export default function AppNavigator() {
         <Stack.Screen name="SoilTesting" component={SoilTesting} />
         <Stack.Screen name="HappyKissan" component={HappyKissan} />
         <Stack.Screen name="SignupPrompt" component={SignupPrompt} />
+        <Stack.Screen name="RentalSubcategory" component={RentalSubcategory} />
+        <Stack.Screen name="RentalRegistration" component={RentalRegistration} />
+        <Stack.Screen name="RentSector" component={RentSector} /> 
+        <Stack.Screen name="Tractor" component={Tractor} /> 
 
-       
-        <Stack.Screen name="RentSector" component={RentSector} />
+
         <Stack.Screen name="MyCartScreen" component={MyCartScreen} />
         <Stack.Screen name="ShopNowScreen" component={ShopNowScreen} />
         <Stack.Screen name="AddAddressPage" component={AddAddressPage} />
         <Stack.Screen name="Coupon" component={Coupon} />
         <Stack.Screen name="AddressScreen" component={AddressScreen} />
         <Stack.Screen name="AddressDrawer" component={AddressDrawer} />
+        <Stack.Screen name="EditAddress" component={EditAddress} />
+
+
+    
+
         {/* <Stack.Screen name="AddressDrawer" component={DeliverySelection} /> */}
-        
-
-
-
-
-
-
-        
-
-        
-
-        
-
-
-
-
-
-
-
         <Stack.Screen name="MainApp" component={DrawerNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
-    </AppProviders>
+   
   );
 }

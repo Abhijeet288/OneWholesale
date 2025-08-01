@@ -238,8 +238,11 @@
 
 
 
+// -----------------------------------------------------------------------------------------------
 
-import React, { useEffect, useState } from 'react';
+
+
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -248,48 +251,55 @@ import {
   FlatList,
   Dimensions,
   ActivityIndicator,
+  Pressable,
 } from 'react-native';
-
+import Ionicons from 'react-native-vector-icons/Ionicons'; // ↩︎ arrow icon
+import ProductList from '../../components/ProductList';
+import Toast from 'react-native-toast-message';
 const { width } = Dimensions.get('window');
 
-// 👇 Base URL (use 10.0.2.2 for Android emulator)
-const BASE_URL = 'http://10.0.2.2:5220/api/Category';
+// const API_BASE = 'http://192.168.29.21:5220/api';
+// const MEDIA_BASE = 'http://192.168.29.21:5220'; // prepend for relative image paths
 
-const ProductList = ({ selectedCategory }) => {
-  const [scategories, setScategories] = useState([]);
+
+const API_BASE = 'http://10.0.2.2:5220/api';
+const MEDIA_BASE = 'http://10.0.2.2:5220'; // prepend for relative image paths
+export default function ProductCard({ selectedCategory }) {
+  /* ---------- shared state ---------- */
   const [loading, setLoading] = useState(false);
 
+  /* ---------- sCategory state ---------- */
+  const [sCategories, setSCategories] = useState([]);
+
+  /* ---------- product state ---------- */
+  const [products, setProducts] = useState([]);
+  const [activeSCategory, setActiveSCategory] = useState(null); // null ⇢ show sCategories
+
+  /* ---------- fetch sCategories when category changes ---------- */
   useEffect(() => {
     if (!selectedCategory || selectedCategory === 'all') {
-      setScategories([]);
+      setSCategories([]);
       return;
     }
 
     const fetchSCategories = async () => {
       setLoading(true);
       try {
-        // 1. Fetch all pCategories by selected categoryId
-        const pcRes = await fetch(`${BASE_URL}/pCategories/${selectedCategory}`);
+        // step 1: pCategories for category
+        const pcRes = await fetch(`${API_BASE}/Category/pCategories/${selectedCategory}`);
         const pcData = await pcRes.json();
-        const pCategoryIDs = Array.isArray(pcData)
-          ? pcData.map((p) => p.pCategoryID)
-          : [];
+        const pIds = Array.isArray(pcData) ? pcData.map(p => p.pCategoryID) : [];
 
-        // 2. Fetch sCategories for each pCategoryId
-        const sCatFetches = await Promise.all(
-          pCategoryIDs.map(async (pcId) => {
-            const res = await fetch(`${BASE_URL}/sCategories/${pcId}`);
-            const data = await res.json();
-            return Array.isArray(data) ? data : [];
-          })
+        // step 2: sCategories for each pCategory
+        const scLists = await Promise.all(
+          pIds.map(id =>
+            fetch(`${API_BASE}/Category/sCategories/${id}`).then(r => r.json())
+          )
         );
-
-        // 3. Merge all sCategories
-        const allSCategories = sCatFetches.flat();
-        setScategories(allSCategories);
-      } catch (error) {
-        console.error(' Error fetching sCategories:', error);
-        setScategories([]);
+        setSCategories(scLists.flat());
+      } catch (err) {
+        console.error('❌ sCategory fetch error:', err);
+        setSCategories([]);
       } finally {
         setLoading(false);
       }
@@ -298,60 +308,143 @@ const ProductList = ({ selectedCategory }) => {
     fetchSCategories();
   }, [selectedCategory]);
 
-  const renderCard = ({ item }) => (
-    <View style={styles.card}>
-      <Image
-        source={{ uri: item.sCategoryImage || <Text>Null</Text> }}
-        style={styles.image}
-      />
-      <Text style={styles.title}>{item.sCategoryName}</Text>
-    </View>
-  );
+  /* ---------- fetch products when an sCategory is chosen ---------- */
+  const loadProducts = useCallback(async (sCatId) => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `${API_BASE}/Product/products/sCategoryId?sCategoryId=${sCatId}`
+      );
+      const data = await res.json();
+      setProducts(Array.isArray(data) ? data : []);
+      setActiveSCategory(sCatId);
+    } catch (err) {
+      console.error('❌ product fetch error:', err);
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  /* ---------- render helpers ---------- */
+  const renderSCard = ({ item }) => {
+    const uri = item.sCategoryImage
+      ? item.sCategoryImage.startsWith('http')
+        ? item.sCategoryImage
+        : `${MEDIA_BASE}${item.sCategoryImage}`
+      : 'nothing';
+
+    return (
+      <Pressable onPress={() => loadProducts(item.sCategoryID)} style={styles.card}>
+        <View style={styles.imageWrapper}>
+          <Image source={{ uri }} style={styles.image} />
+        </View>
+        <Text style={styles.title}>{item.sCategoryName}</Text>
+      </Pressable>
+    );
+  };
+
+
+  //product list render function...
+ const renderProduct = ({ item }) => {
+  const imageUri = item.productImage
+    ? item.productImage.startsWith('http')
+      ? item.productImage
+      : `${MEDIA_BASE}${item.productImage}`
+    : null;
+
+  return <ProductList item={item} imageUri={imageUri} />;
+};
+
+  /* ---------- loading spinner ---------- */
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={styles.loading}>
         <ActivityIndicator size="small" color="#4CAF50" />
       </View>
     );
   }
 
+  /* ---------- product view ---------- */
+  if (activeSCategory) {
+    return (
+      <View style={{ flex: 1 }}>
+        {/* back arrow */}
+        <Pressable onPress={() => setActiveSCategory(null)} style={styles.backBtn}>
+          <Ionicons name="arrow-back" size={24} color="#333" />
+        </Pressable>
+
+        {/* product list */}
+        <FlatList
+          data={products}
+          keyExtractor={(p) => p.productID.toString()}
+          renderItem={renderProduct}
+          numColumns={2} 
+          columnWrapperStyle={{ justifyContent: 'space-between' }}
+          contentContainerStyle={styles.prodList}
+          ListEmptyComponent={
+            <Text style={styles.emptyMsg}>No products found.</Text>
+          }
+          showsVerticalScrollIndicator={false}
+        />
+
+      </View>
+    );
+  }
+
+  /* ---------- sCategory grid (default view) ---------- */
   return (
     <FlatList
-      data={scategories}
-      keyExtractor={(item) => item.sCategoryID.toString()}
-      renderItem={renderCard}
+      data={sCategories}
+      keyExtractor={s => s.sCategoryID.toString()}
+      renderItem={renderSCard}
       numColumns={2}
       contentContainerStyle={styles.list}
-      ListEmptyComponent={
-        <View style={{ padding: 20, alignItems: 'center' }}>
-          <Text style={{ color: '#666' }}>No sub-categories found</Text>
-        </View>
-      }
+      ListEmptyComponent={<Text style={styles.emptyMsg}>No sub‑categories found.</Text>}
       showsVerticalScrollIndicator={false}
     />
   );
-};
+  // <Toast />
+}
+
+/* ---------- styles ---------- */
+const IMAGE_SIZE = 120; // square size for consistent image display
 
 const styles = StyleSheet.create({
-  list: {
-    paddingHorizontal: 10,
-    paddingBottom: 20,
-  },
+  /* shared */
+  loading: { padding: 20, alignItems: 'center' },
+  emptyMsg: { padding: 20, textAlign: 'center', color: '#666' },
+
+  /* sCategory grid */
+  list: { paddingHorizontal: 10, paddingBottom: 20 },
   card: {
-    backgroundColor: '#fff',
-    margin: 8,
-    padding: 10,
-    borderRadius: 8,
-    width: (width - 40) / 2,
-    alignItems: 'center',
-    elevation: 3,
-  },
+  margin: 8,
+  paddingVertical: 16,
+  paddingHorizontal: 10,
+  borderRadius: 16,
+  width: (width - 40) / 2,
+  alignItems: 'center',
+  // backgroundColor: '#fff',  ❌ remove this
+  backgroundColor: 'transparent', // ✅ optional — or use a light tint like '#f0f0f0'
+  elevation: 0, // remove elevation shadow if you want flat look
+  shadowColor: 'transparent', // also remove iOS shadow
+},
+ imageWrapper: {
+  width: IMAGE_SIZE,
+  height: IMAGE_SIZE,
+  borderRadius: IMAGE_SIZE / 2,
+  backgroundColor: '#e9f7f1', // ✅ soft green tint or transparent if you prefer
+  overflow: 'hidden',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom: 10,
+  borderWidth: 1,
+  borderColor: '#d0e5db', // soft border
+},
   image: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
-    marginBottom: 8,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   title: {
     fontSize: 13,
@@ -359,11 +452,26 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333',
   },
-  loadingContainer: {
-    padding: 20,
-    alignItems: 'center',
+
+  /* product list */
+  backBtn: {
+    padding: 12,
+    paddingTop: 18,
   },
+  prodList: {
+    paddingHorizontal: 14,
+    paddingBottom: 20,
+  },
+  prodCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginVertical: 6,
+    padding: 14,
+    elevation: 2,
+  },
+  prodName: { fontSize: 15, fontWeight: '600', color: '#222' },
+  prodPrice: { fontSize: 14, color: '#388E3C', marginTop: 4 },
+  prodWeight: { fontSize: 12, color: '#666', marginTop: 2 },
 });
 
-export default ProductList;
-
+// ---------------------------------------------------------------------------------------------------------

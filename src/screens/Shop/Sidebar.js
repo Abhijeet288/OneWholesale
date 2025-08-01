@@ -98,6 +98,7 @@
 
 
 
+
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -111,6 +112,8 @@ import {
 } from 'react-native';
 
 const { width: screenWidth } = Dimensions.get('window');
+const BASE_URL = 'http://10.0.2.2:5220'; // emulator-safe localhost
+// const BASE_URL = 'http://192.168.29.21:5220'; // replace with your actual backend URL
 
 const Sidebar = ({ selectedCategory, onSelectCategory }) => {
   const [categories, setCategories] = useState([]);
@@ -118,28 +121,18 @@ const Sidebar = ({ selectedCategory, onSelectCategory }) => {
 
   const itemWidth = screenWidth * 0.22;
 
-  // List of known sector IDs to fetch from
-  const sectorIds = [4001, 4002, 4003, 4004];
-
   useEffect(() => {
-    const fetchAllCategories = async () => {
+    const fetchCategories = async () => {
       setLoading(true);
       try {
-        const allCategories = [];
-
-        const fetchPromises = sectorIds.map(async (sectorId) => {
-          const res = await fetch(`http://10.0.2.2:5220/api/Category/categories/${sectorId}`);
-          const data = await res.json();
-          return Array.isArray(data) ? data : [];
-        });
-
-        const results = await Promise.all(fetchPromises);
-
-        results.forEach((categoryList) => {
-          allCategories.push(...categoryList);
-        });
-
-        setCategories(allCategories);
+        const res = await fetch(`${BASE_URL}/api/Category/categories`);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setCategories(data);
+        } else {
+          console.warn('Unexpected categories response:', data);
+          setCategories([]);
+        }
       } catch (error) {
         console.error('❌ Error fetching categories:', error);
         setCategories([]);
@@ -148,7 +141,7 @@ const Sidebar = ({ selectedCategory, onSelectCategory }) => {
       }
     };
 
-    fetchAllCategories();
+    fetchCategories();
   }, []);
 
   if (loading) {
@@ -162,27 +155,37 @@ const Sidebar = ({ selectedCategory, onSelectCategory }) => {
   return (
     <ScrollView
       horizontal
-      showsHorizontalScrollIndicator={true}
+      showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.scrollContainer}
     >
-      {categories.map((category) => (
-        <Pressable
-          key={category.categoryID}
-          style={[
-            styles.categoryItem,
-            { width: itemWidth },
-            selectedCategory === category.categoryID && styles.selectedCategory,
-          ]}
-          onPress={() => onSelectCategory(category.categoryID)}
-        >
-          <Image
-            source={{ uri: category.categoryImage || 'https://via.placeholder.com/32' }}
-            style={styles.icon}
-          />
-          <Text style={styles.categoryText}>{category.categoryName}</Text>
-          {selectedCategory === category.categoryID && <View style={styles.dot} />}
-        </Pressable>
-      ))}
+      {categories.map((category) => {
+        const imageUrl = category.categoryImage?.startsWith('http')
+          ? category.categoryImage
+          : `${BASE_URL}${category.categoryImage}`;
+
+        return (
+          <Pressable
+            key={category.categoryID}
+            style={[
+              styles.categoryItem,
+              { width: itemWidth },
+              selectedCategory === category.categoryID && styles.selectedCategory,
+            ]}
+            onPress={() => onSelectCategory(category.categoryID)}
+          >
+            <View style={styles.imageContainer}>
+              <Image
+                source={{ uri: imageUrl }}
+                style={styles.icon}
+              />
+            </View>
+            <Text style={styles.categoryText} numberOfLines={1}>
+              {category.categoryName}
+            </Text>
+            {selectedCategory === category.categoryID && <View style={styles.dot} />}
+          </Pressable>
+        );
+      })}
     </ScrollView>
   );
 };
@@ -190,39 +193,52 @@ const Sidebar = ({ selectedCategory, onSelectCategory }) => {
 const styles = StyleSheet.create({
   scrollContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#f2fef6',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    backgroundColor: '#f6fefc',
   },
   categoryItem: {
-    height: 85,
+    height: 110,
+    marginRight: 12,
+    borderRadius: 14,
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
-    borderRadius: 10,
-    backgroundColor: '#ffffff',
-    elevation: 3,
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    elevation: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowRadius: 3,
   },
   selectedCategory: {
-    backgroundColor: '#e0f7eb',
+    backgroundColor: '#e1f5ee',
     borderColor: '#4CAF50',
     borderWidth: 1,
   },
+  imageContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25, // half of width/height
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+    overflow: 'hidden',
+  },
   icon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    resizeMode: 'contain',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    resizeMode: 'cover',
   },
   categoryText: {
-    fontSize: 11,
+    fontSize: 12,
+    fontWeight: '500',
     textAlign: 'center',
-    marginTop: 4,
     color: '#333',
+    maxWidth: '95%',
   },
   dot: {
     position: 'absolute',
@@ -234,5 +250,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#4CAF50',
   },
 });
+
 
 export default Sidebar;

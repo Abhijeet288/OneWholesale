@@ -41,7 +41,6 @@ const Selection = () => {
           >
             <Image
               source={require('../assests/images/buyer.png')}
-                // source={{ uri: 'https://images.unsplash.com/photo-1623211265502-412854043d15?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGluZGlhbiUyMGZhcm1lcnxlbnwwfHwwfHx8MA%3D%3D' }}
               style={styles.optionImage}
             />
             <Text style={styles.optionText}>FARMER</Text>

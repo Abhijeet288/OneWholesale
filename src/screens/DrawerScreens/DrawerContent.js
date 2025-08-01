@@ -124,7 +124,7 @@ export const DrawerContent = ({ navigation }) => {
             </View>
           </View>
           <View>
-            <Text style={styles.name}>{userProfile.name}</Text>
+            <Text style={styles.name}>{user.firstName} {user.lastName}</Text>
             <Text style={styles.phone}>{userProfile.phone}</Text>
           </View>
         </View>

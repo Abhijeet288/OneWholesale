@@ -3,15 +3,19 @@ import { CartProvider } from "./CartContext";
 import { LocationProvider } from "./LocationContext";
 import { UserProvider } from "./UserContext";
 
-export const AppProviders = ({ children }) => (
-  <UserProvider>
-    <LocationProvider>
-      <CartProvider>
-        <AddressProvider>
-          {children}
-        </AddressProvider>
-      </CartProvider>
-    </LocationProvider>
-  </UserProvider>
-);
+ const AppProvider = ({ children }) => {
+  console.log('AppProviders initialized');
 
+  return (
+    <UserProvider>
+      <LocationProvider>
+        <CartProvider>
+          <AddressProvider>
+            {children}
+          </AddressProvider>
+        </CartProvider>
+      </LocationProvider>
+    </UserProvider>
+  );
+};
+export default AppProvider;

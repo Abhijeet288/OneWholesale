@@ -1,7 +1,8 @@
 import React from 'react';
 import AppNavigator from './src/navigation/AppNavigator';
-import { AppProviders } from './src/Contexts/AppProvider';
+import AppProvider from './src/Contexts/AppProvider';
 import {Text} from 'react-native'
+import Toast from 'react-native-toast-message';
 export default function App() {
 
   
@@ -11,9 +12,13 @@ Text.defaultProps.allowFontScaling = false;
 Text.defaultProps.style = { fontFamily: 'Oldenburg-Regular'};
 
    return (
-    <AppProviders>
-      <AppNavigator />
-    </AppProviders>
+    <>
+    <AppProvider>
+       <AppNavigator />
+    </AppProvider>
+      
+     <Toast />
+     </>
   );
    
    
